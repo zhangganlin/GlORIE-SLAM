@@ -11,6 +11,7 @@ from src import config
 from src.utils.common import update_cam
 from src.utils.eval_traj import align_kf_traj
 from src.utils.datasets import get_dataset
+from src.utils.Printer import FontColor,TrivialPrinter
 from tqdm import tqdm
 
 def setup_seed(seed):
@@ -51,7 +52,7 @@ class DepthImageDataset(Dataset):
         return depth, image
 
 
-def generate_mesh_kf(config_path,rendered_path="rendered_every_keyframe",mesh_name_suffix="kf"):
+def generate_mesh_kf(config_path,rendered_path="rendered_every_keyframe",mesh_name_suffix="kf",printer=None):
     cfg = config.load_config(config_path, "configs/mono_point_slam.yaml")
     # define variables for dynamic query radius computation
     output = f"{cfg['data']['output']}/{cfg['setting']}/{cfg['scene']}"
@@ -71,14 +72,14 @@ def generate_mesh_kf(config_path,rendered_path="rendered_every_keyframe",mesh_na
         sdf_trunc=0.04 * scale,
         color_type=o3d.pipelines.integration.TSDFVolumeColorType.RGB8)
 
-    print('Starting to integrate the mesh...')
+    printer.print('Starting to integrate the mesh...',FontColor.MESH)
     # address the misalignment in open3d marching cubes
     compensate_vector = (-0.0 * scale / 512.0, 2.5 *
                          scale / 512.0, -2.5 * scale / 512.0)
 
     os.makedirs(f'{output}/mesh/mid_mesh', exist_ok=True)
     frame_reader = get_dataset(cfg, device=device)
-    _,_,scene_scale,traj_est,traj_ref = align_kf_traj(offline_video,frame_reader,return_full_est_traj=True)
+    _,_,scene_scale,traj_est,traj_ref = align_kf_traj(offline_video,frame_reader,return_full_est_traj=True,printer=printer)
     traj = traj_est
     video = np.load(offline_video)
 
@@ -88,7 +89,8 @@ def generate_mesh_kf(config_path,rendered_path="rendered_every_keyframe",mesh_na
         video_idx = i+warmup-1 + v_idx_offset
         while index!=int(video['timestamps'][video_idx]):
             assert(int(video['timestamps'][video_idx])<index)
-            print(f"Skip frame {int(video['timestamps'][video_idx])} (v_idx:{video_idx}) because rendered image and depth are not found.")
+            printer.print(f"Skip frame {int(video['timestamps'][video_idx])} (v_idx:{video_idx}) because rendered image and depth are not found.",
+                          FontColor.MESH)
             v_idx_offset += 1
             video_idx = i+warmup-1 + v_idx_offset
             
@@ -117,15 +119,15 @@ def generate_mesh_kf(config_path,rendered_path="rendered_every_keyframe",mesh_na
     o3d_mesh = o3d_mesh.translate(compensate_vector)
 
     o3d.io.write_triangle_mesh(mesh_out_file, o3d_mesh)
-    print(f"Final mesh file is saved: {mesh_out_file}")
-    print('🕹️ Meshing finished.')
+    printer.print(f"Final mesh file is saved: {mesh_out_file}",FontColor.INFO)
+    printer.print('🕹️ Meshing finished.',FontColor.MESH)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Configs for Mono-Point-SLAM."
+        description="Configs for GlORIE-SLAM."
     )
     parser.add_argument(
         "config", type=str, help="Path to config file.",
     )
     args = parser.parse_args()
-    generate_mesh_kf(args.config)
+    generate_mesh_kf(args.config,printer=TrivialPrinter())

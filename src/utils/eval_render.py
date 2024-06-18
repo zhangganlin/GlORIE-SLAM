@@ -10,12 +10,14 @@ from skimage import filters
 from scipy.interpolate import interp1d
 from pytorch_msssim import ms_ssim
 from src.utils.common import align_scale_and_shift
+from src.utils.Printer import FontColor
 import traceback
 import numpy as np
+from tqdm import tqdm
 
 def eval_kf_imgs(self):
     # re-render frames at the end for meshing
-    print('Starting re-rendering keyframes...')
+    self.printer.print('Starting re-rendering keyframes...',FontColor.EVAL)
     render_idx, frame_cnt, masked_psnr_sum, masked_ssim_sum, masked_lpips_sum = self.init_idx, 0, 0, 0, 0
     psnr_sum, ssim_sum, lpips_sum = 0,0,0
     if os.path.exists(f'{self.output}/rendered_every_keyframe'):
@@ -25,7 +27,7 @@ def eval_kf_imgs(self):
     cal_lpips = LearnedPerceptualImagePatchSimilarity(
         net_type='alex', normalize=True).to(self.device)
     try:
-        for kf in self.keyframe_dict:
+        for kf in tqdm(self.keyframe_dict):
             render_idx = kf['idx']
             render_video_idx = kf['video_idx']
             _, gt_color, gt_depth, _= self.frame_reader[render_idx]
@@ -90,8 +92,6 @@ def eval_kf_imgs(self):
                 self.logger.log({'idx_frame': render_idx,
                             'psnr_frame': masked_psnr_frame})
             frame_cnt += 1
-            if frame_cnt % 20 == 0:
-                print(f'frame {render_idx}')
 
         avg_masked_psnr = masked_psnr_sum / frame_cnt
         avg_masked_ssim = masked_ssim_sum / frame_cnt
@@ -99,12 +99,12 @@ def eval_kf_imgs(self):
         avg_psnr = psnr_sum / frame_cnt
         avg_ssim = ssim_sum / frame_cnt
         avg_lpips = lpips_sum / frame_cnt
-        print(f'avg_masked_msssim: {avg_masked_ssim}')
-        print(f'avg_msssim: {avg_ssim}')
-        print(f'avg_masked_psnr: {avg_masked_psnr}')
-        print(f'avg_psnr: {avg_psnr}')
-        print(f'avg_masked_lpips: {avg_masked_lpips}')
-        print(f'avg_lpips: {avg_lpips}')
+        self.printer.print(f'avg_masked_msssim: {avg_masked_ssim}',FontColor.EVAL)
+        self.printer.print(f'avg_msssim: {avg_ssim}',FontColor.EVAL)
+        self.printer.print(f'avg_masked_psnr: {avg_masked_psnr}',FontColor.EVAL)
+        self.printer.print(f'avg_psnr: {avg_psnr}',FontColor.EVAL)
+        self.printer.print(f'avg_masked_lpips: {avg_masked_lpips}',FontColor.EVAL)
+        self.printer.print(f'avg_lpips: {avg_lpips}',FontColor.EVAL)
         if self.logger:
             self.logger.log({'avg_masked_ssim': avg_masked_ssim, 'avg_ssim': avg_ssim,
                                 'avg_masked_psnr': avg_masked_psnr, 'avg_psnr': avg_psnr,
@@ -120,13 +120,13 @@ def eval_kf_imgs(self):
             fp.write(output_str)
     except Exception as e:
         traceback.print_exception(e)
-        print('Rerendering frames failed.')
-    print(f'Finished rendering {frame_cnt} frames.')
+        self.printer.print('Rerendering frames failed.',FontColor.ERROR)
+    self.printer.print(f'Finished rendering {frame_cnt} frames.',FontColor.EVAL)
 
 def eval_imgs(self,est_c2ws):
 
     # re-render frames at the end for meshing
-    print('Starting re-rendering frames...')
+    self.printer.print('Starting re-rendering frames...',FontColor.EVAL)
     render_idx, frame_cnt, masked_psnr_sum, masked_ssim_sum, masked_lpips_sum = self.init_idx, 0, 0, 0, 0
     psnr_sum, ssim_sum, lpips_sum = 0,0,0
     if os.path.exists(f'{self.output}/rendered_every_frame'):
@@ -136,7 +136,7 @@ def eval_imgs(self,est_c2ws):
     cal_lpips = LearnedPerceptualImagePatchSimilarity(
         net_type='alex', normalize=True).to(self.device)
     try:
-        for idx, gt_color, gt_depth, _ in self.frame_reader:
+        for idx, gt_color, gt_depth, _ in tqdm(self.frame_reader):
             every_frame = self.cfg['mapping']['every_frame']
             if idx % every_frame != 0:
                 continue
@@ -212,8 +212,6 @@ def eval_imgs(self,est_c2ws):
             masked_lpips_sum += masked_lpips_value
 
             frame_cnt += 1
-            if frame_cnt % 20 == 0:
-                print(f'frame {render_idx}')
 
         avg_masked_psnr = masked_psnr_sum / frame_cnt
         avg_masked_ssim = masked_ssim_sum / frame_cnt
@@ -221,12 +219,15 @@ def eval_imgs(self,est_c2ws):
         avg_psnr = psnr_sum / frame_cnt
         avg_ssim = ssim_sum / frame_cnt
         avg_lpips = lpips_sum / frame_cnt
-        print(f'avg_masked_ssim_every: {avg_masked_ssim}')
-        print(f'avg_ssim_every: {avg_ssim}')
-        print(f'avg_masked_psnr_every: {avg_masked_psnr}')
-        print(f'avg_psnr_every: {avg_psnr}')
-        print(f'avg_masked_lpips_every: {avg_masked_lpips}')
-        print(f'avg_lpips_every: {avg_lpips}')
+
+        self.printer.print(f'avg_masked_msssim: {avg_masked_ssim}',FontColor.EVAL)
+        self.printer.print(f'avg_msssim: {avg_ssim}',FontColor.EVAL)
+        self.printer.print(f'avg_masked_psnr: {avg_masked_psnr}',FontColor.EVAL)
+        self.printer.print(f'avg_psnr: {avg_psnr}',FontColor.EVAL)
+        self.printer.print(f'avg_masked_lpips: {avg_masked_lpips}',FontColor.EVAL)
+        self.printer.print(f'avg_lpips: {avg_lpips}',FontColor.EVAL)
+
+
         if self.logger:
             self.logger.log({'avg_masked_ssim_every': avg_masked_ssim, 'avg_ssim_every': avg_ssim,
                                 'avg_masked_psnr_every': avg_masked_psnr, 'avg_psnr_every': avg_psnr,
@@ -242,5 +243,5 @@ def eval_imgs(self,est_c2ws):
             fp.write(output_str)
     except Exception as e:
         traceback.print_exception(e)
-        print('Rerendering frames failed.')
-    print(f'Finished rendering {frame_cnt} frames.')
+        self.printer.print('Rerendering frames failed.',FontColor.ERROR)
+    self.printer.print(f'Finished rendering {frame_cnt} frames.',FontColor.EVAL)

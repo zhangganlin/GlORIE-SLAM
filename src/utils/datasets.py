@@ -186,7 +186,6 @@ class ScanNet(BaseDataset):
         self.poses = self.poses[:max_frames][::stride]
 
         self.n_img = len(self.color_paths)
-        print("INFO: {} images got!".format(self.n_img))
 
     def load_poses(self, path):
         self.poses = []
@@ -216,7 +215,6 @@ class TUM_RGBD(BaseDataset):
         self.depth_paths = self.depth_paths[:max_frames][::stride]
         self.poses = self.poses[:max_frames][::stride]
         self.n_img = len(self.color_paths)
-        print("INFO: {} images got!".format(self.n_img))
 
     def parse_list(self, filepath, skiprows=0):
         """ read list data """

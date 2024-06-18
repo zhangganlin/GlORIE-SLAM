@@ -4,12 +4,13 @@ from lietorch import SE3
 from src.factor_graph import FactorGraph
 from tqdm import tqdm
 from src.utils.datasets import BaseDataset
+from src.utils.Printer import FontColor
 
 class PoseTrajectoryFiller:
     """ This class is used to fill in non-keyframe poses 
         mainly inherited from DROID-SLAM
     """
-    def __init__(self, net, video, device='cuda:0'):
+    def __init__(self, net, video, printer, device='cuda:0'):
 
         # split net modules
         self.cnet = net.cnet
@@ -19,6 +20,7 @@ class PoseTrajectoryFiller:
         self.count = 0
         self.video = video
         self.device = device
+        self.printer = printer
 
         # mean, std for image normalization
         self.MEAN = torch.tensor([0.485, 0.456, 0.406], device=device)[:, None, None]
@@ -89,7 +91,7 @@ class PoseTrajectoryFiller:
         images = []
         intrinsics = []
 
-        print("Filling full trajectory ...")
+        self.printer.print("Filling full trajectory ...",FontColor.INFO)
         intrinsic = image_stream.get_intrinsic()
         for (timestamp, image, _ , _)  in tqdm(image_stream):
             timestamps.append(timestamp)

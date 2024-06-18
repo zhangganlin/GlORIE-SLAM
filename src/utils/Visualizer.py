@@ -6,6 +6,7 @@ from src.utils.common import get_camera_from_tensor
 import wandb
 import cv2
 from src.neural_point import proj_depth_map
+from src.utils.Printer import FontColor
 
 
 class Visualizer(object):
@@ -55,7 +56,7 @@ class Visualizer(object):
     @torch.no_grad()
     def vis(self, idx, iter, gt_depth, render_depth, droid_depth, mono_depth,
             gt_color, c2w_or_camera_tensor, npc,
-            decoders, npc_geo_feats, npc_col_feats, cfg,
+            decoders, npc_geo_feats, npc_col_feats, cfg, printer,
             freq_override=False,
             dynamic_r_query=None, cloud_pos=None,
             cur_total_iters=None, save_rendered_image=False):
@@ -213,8 +214,9 @@ class Visualizer(object):
             plt.close()
 
             if self.verbose:
-                print(
-                    f'Saved rendering visualization of color/depth image at {self.vis_dir}/{idx:05d}_{iter if cur_total_iters is None else cur_total_iters:04d}.jpg')
+                printer.print(
+                    f'Saved rendering visualization of color/depth image at {self.vis_dir}/{idx:05d}_{iter if cur_total_iters is None else cur_total_iters:04d}.jpg',
+                    FontColor.INFO)
 
 
 import matplotlib as mpl
@@ -281,8 +283,8 @@ class CameraPoseVisualizer:
         norm = mpl.colors.Normalize(vmin=0, vmax=max_frame_length)
         self.fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap), ax=self.ax, orientation='vertical', label='Frame Number')
     
-    def save(self,path):
+    def save(self,path,printer):
         self.fig.savefig(path)
-        print(f"Camera 3D trajectory is saved: {path}")
+        printer.print(f"Camera 3D trajectory is saved: {path}",FontColor.INFO)
         plt.clf()
     
