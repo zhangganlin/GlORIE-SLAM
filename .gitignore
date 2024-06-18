@@ -20,3 +20,5 @@ wandb
 datasets
 cull_replica_mesh
 euler
+eval_ssim
+output

@@ -87,6 +87,22 @@ pip install thirdparty/evaluate_3d_reconstruction_lib
 python setup.py install
 ```
 
+4. Download pretrained model.
+Download the pretained models from [Google Drive](https://drive.google.com/file/d/1oZbVPrubtaIUjRRuT8F-YjjHBW-1spKT/view?usp=drive_link), unzip them inside the `pretrained` folder.
+<details>
+  <summary>[Directory structure of pretrianed (click to expand)]</summary>
+  
+```bash
+  .
+  └── pretrained
+        ├── .gitkeep
+        ├── droid.pth
+        ├── middle_fine.pt
+        └── omnidata_dpt_depth_v2.ckpt
+
+```
+</details>
+
 ## Data Download
 
 ### Replica
@@ -204,5 +220,5 @@ If you find our code or paper useful, please cite
 }
 ```
 ## Contact
-Contact [Ganlin Zhang](mailto:zgl0315@gmail.com)[Erik Sandström](mailto:erik.sandstrm@gmail.com) for questions, comments and reporting bugs.
+Contact [Ganlin Zhang](mailto:zgl0315@gmail.com) and [Erik Sandström](mailto:erik.sandstrm@gmail.com) for questions, comments and reporting bugs.
 

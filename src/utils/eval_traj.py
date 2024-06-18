@@ -1,7 +1,8 @@
 import numpy as np
 from lietorch import SE3
+from src.utils.Printer import FontColor
 
-def align_kf_traj(npz_path,stream,return_full_est_traj=False):
+def align_kf_traj(npz_path,stream,return_full_est_traj=False,printer=None):
     offline_video = dict(np.load(npz_path))
     traj_ref = []
     traj_est = []
@@ -13,7 +14,7 @@ def align_kf_traj(npz_path,stream,return_full_est_traj=False):
         timestamp = int(video_timestamps[i])
         val = stream.poses[timestamp].sum()
         if np.isnan(val) or np.isinf(val):
-            print(f'Nan or Inf found in gt poses, skipping {i}th pose!')
+            printer.print(f'Nan or Inf found in gt poses, skipping {i}th pose!',FontColor.INFO)
             continue
         traj_est.append(video_traj[i])
         traj_ref.append(stream.poses[timestamp])
@@ -38,7 +39,7 @@ def align_kf_traj(npz_path,stream,return_full_est_traj=False):
 
     return r_a, t_a, s, traj_est, traj_ref    
 
-def align_full_traj(traj_est_full,stream):
+def align_full_traj(traj_est_full,stream,printer):
 
     timestamps = []
     traj_ref = []
@@ -46,7 +47,7 @@ def align_full_traj(traj_est_full,stream):
     for i in range(len(stream.poses)):
         val = stream.poses[i].sum()
         if np.isnan(val) or np.isinf(val):
-            print(f'Nan or Inf found in gt poses, skipping {i}th pose!')
+            printer.print(f'Nan or Inf found in gt poses, skipping {i}th pose!',FontColor.INFO)
             continue
         traj_est.append(traj_est_full[i])
         traj_ref.append(stream.poses[i])
@@ -64,20 +65,20 @@ def align_full_traj(traj_est_full,stream):
     return r_a, t_a, s, traj_est, traj_ref    
 
 
-def traj_eval_and_plot(traj_est, traj_ref, plot_parent_dir, plot_name):
+def traj_eval_and_plot(traj_est, traj_ref, plot_parent_dir, plot_name,printer):
     import os
     from evo.core import metrics
     from evo.tools import plot
     import matplotlib.pyplot as plt
     if not os.path.exists(plot_parent_dir):
         os.makedirs(plot_parent_dir)
-    print("calculating APE ...")
+    printer.print("Calculating APE ...",FontColor.EVAL)
     data = (traj_ref, traj_est)
     ape_metric = metrics.APE(metrics.PoseRelation.translation_part)
     ape_metric.process_data(data)
     ape_statistics = ape_metric.get_all_statistics()
 
-    print("plotting ...")
+    printer.print("Plotting ...",FontColor.EVAL)
 
     plot_collection = plot.PlotCollection("kf factor graph")
     # metric values
@@ -94,8 +95,8 @@ def traj_eval_and_plot(traj_est, traj_ref, plot_parent_dir, plot_name):
     return ape_statistics
 
 
-def kf_traj_eval(npz_path, plot_parent_dir,plot_name, stream, logger):
-    r_a, t_a, s, traj_est, traj_ref = align_kf_traj(npz_path, stream)
+def kf_traj_eval(npz_path, plot_parent_dir,plot_name, stream, logger,printer):
+    r_a, t_a, s, traj_est, traj_ref = align_kf_traj(npz_path, stream,printer=printer)
 
     offline_video = dict(np.load(npz_path))
     
@@ -103,16 +104,15 @@ def kf_traj_eval(npz_path, plot_parent_dir,plot_name, stream, logger):
     if not os.path.exists(plot_parent_dir):
         os.makedirs(plot_parent_dir)
 
-    ape_statistics = traj_eval_and_plot(traj_est,traj_ref,plot_parent_dir,plot_name)
+    ape_statistics = traj_eval_and_plot(traj_est,traj_ref,plot_parent_dir,plot_name,printer)
 
     output_str = "#"*10+"Keyframes traj"+"#"*10+"\n"
     output_str += f"scale: {s}\n"
     output_str += f"rotation:\n{r_a}\n"
     output_str += f"translation:{t_a}\n"
-    output_str += f"statistics:\n{ape_statistics}\n"
-    output_str += "#"*34+"\n"
-
-    print(output_str)
+    output_str += f"statistics:\n{ape_statistics}"
+    printer.print(output_str,FontColor.EVAL)
+    printer.print("#"*34,FontColor.EVAL)
     out_path=f'{plot_parent_dir}/metrics_kf_traj.txt'
     with open(out_path, 'w+') as fp:
         fp.write(output_str)
@@ -125,16 +125,16 @@ def kf_traj_eval(npz_path, plot_parent_dir,plot_name, stream, logger):
     from src.utils.Visualizer import CameraPoseVisualizer
     est_camera_vis = CameraPoseVisualizer()
     est_camera_vis.add_traj(traj_est.poses_se3)
-    est_camera_vis.save(f"{plot_parent_dir}/{plot_name}_3d.png")
+    est_camera_vis.save(f"{plot_parent_dir}/{plot_name}_3d.png",printer)
 
     ref_camera_vis = CameraPoseVisualizer()
     ref_camera_vis.add_traj(traj_ref.poses_se3)
-    ref_camera_vis.save(f"{plot_parent_dir}/ref_3d.png")
+    ref_camera_vis.save(f"{plot_parent_dir}/ref_3d.png",printer)
 
     return ape_statistics, s, r_a, t_a
 
 
-def full_traj_eval(traj_filler, plot_parent_dir, plot_name, stream,logger):
+def full_traj_eval(traj_filler, plot_parent_dir, plot_name, stream,logger,printer):
 
     traj_est_inv = traj_filler(stream)
     traj_est_lietorch = traj_est_inv.inv()
@@ -145,22 +145,22 @@ def full_traj_eval(traj_filler, plot_parent_dir, plot_name, stream,logger):
     traj_est[kf_timestamps] = kf_poses
     traj_est_not_align = traj_est.copy()
 
-    r_a, t_a, s, traj_est, traj_ref = align_full_traj(traj_est, stream)    
+    r_a, t_a, s, traj_est, traj_ref = align_full_traj(traj_est, stream, printer)    
 
     import os
     if not os.path.exists(plot_parent_dir):
         os.makedirs(plot_parent_dir)
 
-    ape_statistics = traj_eval_and_plot(traj_est,traj_ref,plot_parent_dir,plot_name)
-    
+    ape_statistics = traj_eval_and_plot(traj_est,traj_ref,plot_parent_dir,plot_name,printer)
     output_str = "#"*10+"Full traj"+"#"*10+"\n"
     output_str += f"scale: {s}\n"
     output_str += f"rotation:\n{r_a}\n"
     output_str += f"translation:{t_a}\n"
-    output_str += f"statistics:\n{ape_statistics}\n"
-    output_str += "#"*29+"\n"
+    output_str += f"statistics:\n{ape_statistics}"
+    printer.print(output_str,FontColor.EVAL)
+    printer.print("#"*29,FontColor.EVAL)
 
-    print(output_str)
+    
     out_path=f'{plot_parent_dir}/metrics_full_traj.txt'
     with open(out_path, 'w+') as fp:
         fp.write(output_str)

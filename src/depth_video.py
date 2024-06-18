@@ -8,11 +8,12 @@ from torch.multiprocessing import Value
 from src.modules.droid_net import cvx_upsample
 import src.geom.projective_ops as pops
 from src.utils.common import align_scale_and_shift
+from src.utils.Printer import FontColor
 
 class DepthVideo:
     ''' store the estimated poses and depth maps, 
         shared between tracker and mapper '''
-    def __init__(self, cfg):
+    def __init__(self, cfg, printer):
         self.cfg =cfg
         self.output = f"{cfg['data']['output']}/{cfg['setting']}/{cfg['scene']}"
         ht = cfg['cam']['H_out']
@@ -52,6 +53,7 @@ class DepthVideo:
 
         # initialize poses to identity transformation
         self.poses[:] = torch.as_tensor([0, 0, 0, 0, 0, 0, 1], dtype=torch.float, device=self.device)
+        self.printer = printer
 
     def get_lock(self):
         return self.counter.get_lock()
@@ -379,5 +381,5 @@ class DepthVideo:
         timestamps = torch.stack(timestamps,dim=0).numpy() 
         valid_depth_masks = torch.stack(valid_depth_masks,dim=0).numpy()       
         np.savez(path,poses=poses,depths=depths,timestamps=timestamps,valid_depth_masks=valid_depth_masks)
-        print(f"Saved final depth video: {path}")
+        self.printer.print(f"Saved final depth video: {path}",FontColor.INFO)
 

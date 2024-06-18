@@ -3,10 +3,9 @@ from src.frontend import Frontend
 from src.backend import Backend
 import torch
 from colorama import Fore, Style
-from tqdm import tqdm
 from multiprocessing.connection import Connection
 from src.utils.datasets import BaseDataset
-
+from src.utils.Printer import Printer,FontColor
 class Tracker:
     def __init__(self, slam, pipe:Connection):
         self.cfg = slam.cfg
@@ -29,6 +28,8 @@ class Tracker:
         self.online_ba = Backend(self.net,self.video, self.cfg)
         self.ba_freq = self.cfg['tracking']['backend']['ba_freq']
 
+        self.printer:Printer = slam.printer
+
     def run(self, stream:BaseDataset):
         '''
         Trigger the tracking process.
@@ -45,7 +46,9 @@ class Tracker:
 
         number_of_kf = 0
         intrinsic = stream.get_intrinsic()
-        for (timestamp, image, _, _) in tqdm(stream):
+        # for (timestamp, image, _, _) in tqdm(stream):
+        for i in range(len(stream)):
+            timestamp, image, _, _ = stream[i]
             with torch.no_grad():
                 ### check there is enough motion
                 self.motion_filter.track(timestamp, image, intrinsic)
@@ -57,7 +60,7 @@ class Tracker:
                 number_of_kf += 1
                 if self.enable_online_ba and curr_kf_idx >= prev_ba_idx + self.ba_freq:
                     # run online global BA every {self.ba_freq} keyframes
-                    print("Online BA at keyframe",curr_kf_idx)
+                    self.printer.print(f"Online BA at {curr_kf_idx}th keyframe, frame index: {timestamp}",FontColor.TRACKER)
                     self.online_ba.dense_ba(2)
                     prev_ba_idx = curr_kf_idx
                 if (not self.only_tracking) and (number_of_kf%self.every_kf==0):
@@ -67,10 +70,11 @@ class Tracker:
                     self.pipe.recv()
 
             prev_kf_idx = curr_kf_idx
+            self.printer.update_pbar()
+
         if not self.only_tracking:
             self.pipe.send({"is_keyframe":True, "video_idx":None,
                             "timestamp":None, "end":True})
-
 
 
                 

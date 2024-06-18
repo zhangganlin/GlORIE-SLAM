@@ -7,6 +7,7 @@ import torch
 import open3d as o3d
 import numpy as np
 from evaluate_3d_reconstruction import run_evaluation
+from src.utils.Printer import FontColor, TrivialPrinter
 from tqdm import tqdm
 sys.path.append('.')
 
@@ -137,12 +138,12 @@ def viewmatrix(z, up, pos):
     return m
 
 
-def calc_2d_metric(rec_meshfile, gt_meshfile, align=True, n_imgs=1000):
+def calc_2d_metric(rec_meshfile, gt_meshfile, printer,align=True, n_imgs=1000):
     """
     2D reconstruction metric, depth L1 loss.
 
     """
-    print("Evaluating 2D reconstruction metric: depth L1 loss ...")
+    printer.print("Evaluating 2D reconstruction metric: depth L1 loss ...",FontColor.EVAL)
     H = 500
     W = 500
     focal = 300
@@ -225,7 +226,7 @@ def calc_2d_metric(rec_meshfile, gt_meshfile, align=True, n_imgs=1000):
     errors = np.array(errors)
     return {'depth l1': errors.mean()*100}
 
-def eval_recon(rec_mesh,gt_mesh,eval_2d,eval_3d,align):
+def eval_recon(rec_mesh,gt_mesh,eval_2d,eval_3d,align, printer):
     result = {}
     try:
         if eval_3d:
@@ -235,18 +236,18 @@ def eval_recon(rec_mesh,gt_mesh,eval_2d,eval_3d,align):
             result_3d = run_evaluation(pred_ply, path_to_pred_ply, gt_mesh.split("/")[-1][:-4],
                                        distance_thresh=0.05, full_path_to_gt_ply=gt_mesh, icp_align=align)
             result = result | result_3d
-            print(result_3d)
+            printer.print(result_3d,FontColor.EVAL)
 
         if eval_2d:
             result_2d = calc_2d_metric(
-                rec_mesh, gt_mesh, align=align, n_imgs=1000)
+                rec_mesh, gt_mesh,printer, align=align, n_imgs=1000)
             result = result | result_2d
-            print(result_2d)
+            printer.print(result_2d,FontColor.EVAL)
     except Exception as e:
         traceback.print_exception(e)
     return result    
 
-def eval_recon_with_cfg(cfg_path,eval_3d=True,eval_2d=True, kf_mesh=True, every_mesh=False):
+def eval_recon_with_cfg(cfg_path,eval_3d=True,eval_2d=True, kf_mesh=True, every_mesh=False, printer=None):
     from src import config
     cfg = config.load_config(cfg_path, "configs/mono_point_slam.yaml")
     output = f"{cfg['data']['output']}/{cfg['setting']}/{cfg['scene']}"
@@ -256,13 +257,13 @@ def eval_recon_with_cfg(cfg_path,eval_3d=True,eval_2d=True, kf_mesh=True, every_
     if kf_mesh:
         mesh_name = f'{scene_name}_kf.ply'
         rec_mesh = f'{output}/mesh/{mesh_name}'
-        result_kf = eval_recon(rec_mesh,gt_mesh,eval_2d,eval_3d,align=True)
+        result_kf = eval_recon(rec_mesh,gt_mesh,eval_2d,eval_3d,align=True,printer=printer)
         for k, v in result_kf.items():
             result[f"{k}_kf"]=v
     if every_mesh:
         mesh_name = f'{scene_name}_every.ply'
         rec_mesh = f'{output}/mesh/{mesh_name}'
-        result_every = eval_recon(rec_mesh,gt_mesh,eval_2d,eval_3d,align=True)    
+        result_every = eval_recon(rec_mesh,gt_mesh,eval_2d,eval_3d,align=True,printer=printer)    
         for k, v in result_every.items():
             result[f"{k}_every"]=v
     return result
@@ -277,6 +278,6 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
     config_path = args.config
-    eval_recon_with_cfg(config_path)
+    eval_recon_with_cfg(config_path,printer=TrivialPrinter())
 
 

@@ -7,6 +7,7 @@ from src import config
 from src.slam import SLAM
 from src.utils.datasets import get_dataset
 from time import gmtime, strftime
+from colorama import Fore,Style
 
 import random
 def setup_seed(seed):
@@ -38,11 +39,11 @@ if __name__ == '__main__':
     output_dir = output_dir+f"/{cfg['setting']}/{cfg['scene']}"
 
     start_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    start_info = "-"*30+\
-                 f"\nStart GlORIE-SLAM at {start_time},\n" \
+    start_info = "-"*30+Fore.LIGHTRED_EX+\
+                 f"\nStart GlORIE-SLAM at {start_time},\n"+Style.RESET_ALL+ \
                  f"   scene: {cfg['dataset']}-{cfg['scene']},\n" \
                  f"   only_tracking: {cfg['only_tracking']},\n" \
-                 f"   output_folder: {output_dir}\n"+ \
+                 f"   output: {output_dir}\n"+ \
                  "-"*30
     print(start_info)
     
@@ -53,9 +54,9 @@ if __name__ == '__main__':
 
     dataset = get_dataset(cfg)
 
-    slam = SLAM(cfg)
-    slam.run(dataset)
+    slam = SLAM(cfg,dataset)
+    slam.run()
 
     end_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    print("-"*30+f"\nGlORIE-SLAM finishes!\n{end_time}\n"+ "-"*30)
+    print("-"*30+Fore.LIGHTRED_EX+f"\nGlORIE-SLAM finishes!\n+Style.RESET_ALL+{end_time}\n"+"-"*30)
 

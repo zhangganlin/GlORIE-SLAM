@@ -13,6 +13,7 @@ from src.utils.datasets import get_dataset, load_mono_depth
 from src.utils.Visualizer import Visualizer
 from src.utils.Renderer import Renderer
 from src.utils.eval_render import eval_kf_imgs, eval_imgs
+from src.utils.Printer import Printer, FontColor
 from src.neural_point import NeuralPointCloud, update_points_pos, get_proxy_render_depth
 from src.depth_video import DepthVideo
 from src.modules import conv_onet
@@ -38,6 +39,7 @@ class Mapper(object):
     """
     def __init__(self, slam, pipe:Connection):
         self.cfg = slam.cfg
+        self.printer:Printer = slam.printer
         if self.cfg['only_tracking']:
             return
         self.pipe = pipe
@@ -116,7 +118,7 @@ class Mapper(object):
                     fine_dict[key] = val
         self.decoders.geo_decoder.load_state_dict(
             middle_dict, strict=False)
-        print(f'INFO: load ConvONet pretrained checkpiont from {convo_pretrained}!')
+        self.printer.print(f'Load ConvONet pretrained checkpiont from {convo_pretrained}!',FontColor.INFO)
 
     def set_pipe(self, pipe):
         self.pipe = pipe
@@ -261,9 +263,11 @@ class Mapper(object):
         if print_info:
             total_number = (valid_depth_mask.shape[0]*valid_depth_mask.shape[1])
             valid_number = valid_depth_mask.sum().item()
-            print(f"Number of pixels with valid droid depth: {valid_number}/{total_number} ({100*valid_number/total_number:0.2f}%)")
+            self.printer.print(f"Number of pixels with valid droid depth: {valid_number}/{total_number} ({100*valid_number/total_number:0.2f}%)",
+                               FontColor.MAPPER)
         if valid_depth_mask.sum() < 100:
-            print(f"Skip mapping frame {idx} because the number of valid depth is not enough: ({valid_depth_mask.sum().itme()}).")                
+            self.printer.print(f"Skip mapping frame {idx} because the number of valid depth is not enough: ({valid_depth_mask.sum().itme()}).",
+                               FontColor.MAPPER)                
             return None, None, None
         est_droid_depth[~valid_depth_mask] = 0
         c2w[:3, 1:3] *= -1
@@ -303,7 +307,6 @@ class Mapper(object):
         pts_add = self.npc.add_neural_points(batch_rays_o, batch_rays_d, batch_anchor_depth, batch_gt_color,
                                         cur_video_idx, i,j,
                                         dynamic_radius=self.dynamic_r_add[j, i] if self.use_dynamic_radius else None)
-        print(f'{pts_add} locations to add points.')
         frame_pts_add += pts_add
 
         if self.pixels_based_on_color_grad > 0:
@@ -316,8 +319,8 @@ class Mapper(object):
             pts_color_add = self.npc.add_neural_points(batch_rays_o, batch_rays_d, batch_anchor_depth, batch_gt_color,
                                             cur_video_idx, i,j,
                                             is_pts_grad=True, dynamic_radius=self.dynamic_r_add[j, i] if self.use_dynamic_radius else None)
-            print(f'{pts_color_add} locations to add points based on pixel gradients.')
             frame_pts_add += pts_color_add
+        self.printer.print(f'{frame_pts_add} locations to add points.',FontColor.PCL)
         return frame_pts_add
 
     def pix_warping_loss(self,batch_rays_o,batch_rays_d,depth,c2ws,
@@ -550,7 +553,7 @@ class Mapper(object):
             optimize_frame = optimize_frame + [len(keyframe_list)-1]
         optimize_frame += [-1]
         optimize_frame_dict = []
-        print("Projecting pointcloud to keyframes ...")
+        self.printer.print("Projecting pointcloud to keyframes ...",FontColor.PCL)
         for frame in optimize_frame:
             if frame != -1:
                 mono_depth = keyframe_dict[frame]['mono_depth'].to(self.device)
@@ -645,10 +648,11 @@ class Mapper(object):
                         info += f", color_loss: {color_loss.item():0.6f}"
                     if self.pix_warping and forward_reproj_loss.sum().item() >= 0:
                         info += f", pix_warp_loss: {forward_reproj_loss.sum().item():0.6f}"
-                    print(info)
+                    self.printer.print(info,FontColor.MAPPER)
 
             if joint_iter == num_joint_iters-1:
-                print(f'idx: {cur_idx}, time: {toc - tic:0.6f}, geo_loss_pixel: {(geo_loss.item()/depth_mask.sum().item()):0.6f}, color_loss_pixel: {(color_loss.item()/depth_mask.sum().item()):0.4f}')
+                self.printer.print(f'idx: {cur_idx}, time: {toc - tic:0.6f}, geo_loss_pixel: {(geo_loss.item()/depth_mask.sum().item()):0.6f}, color_loss_pixel: {(color_loss.item()/depth_mask.sum().item()):0.4f}',
+                                   FontColor.MAPPER)
                 if self.logger:
                     self.logger.log({'idx_map': int(cur_idx), 'time': float(f'{toc - tic:0.6f}'),
                                 'geo_loss_pixel': float(f'{(geo_loss.item()/depth_mask.sum().item()):0.6f}'),
@@ -662,7 +666,7 @@ class Mapper(object):
                                 cur_depth, cur_droid_depth, cur_mono_depth,
                                 cur_gt_color, 
                                 cur_c2w, self.npc, self.decoders,
-                                npc_geo_feats, npc_col_feats, self.cfg, 
+                                npc_geo_feats, npc_col_feats, self.cfg, self.printer,
                                 freq_override=True if init else False,
                                 dynamic_r_query=cur_r_query,
                                 cloud_pos=self.cloud_pos_tensor,
@@ -675,7 +679,7 @@ class Mapper(object):
             self.npc.update_geo_feats(npc_geo_feats.detach().clone())
             self.npc.update_col_feats(npc_col_feats.detach().clone())
 
-        print('Mapper has updated point features.')
+        self.printer.print('Mapper has updated point features.',FontColor.MAPPER)
 
         return
 
@@ -699,7 +703,7 @@ class Mapper(object):
             False if cannot get valid estimated camera pose, otherwise True 
         """
         if self.bind_npc_with_pose:
-            print("Updating pointcloud position ...")
+            self.printer.print("Updating pointcloud position ...",FontColor.PCL)
             update_points_pos(self.npc, self.video)
 
         cur_c2w,depth_wq, droid_depth = self.get_c2w_and_depth(video_idx,idx,mono_depth,print_info=True)
@@ -751,9 +755,7 @@ class Mapper(object):
                 break
 
             if self.verbose:
-                print(Fore.GREEN)
-                print(f"Mapping Frame {idx}")
-                print(Style.RESET_ALL)
+                self.printer.print(f"\nMapping Frame {idx} ...", FontColor.MAPPER)
             
             _, gt_color, gt_depth, _= self.frame_reader[idx]
             mono_depth_input = load_mono_depth(idx,self.cfg)
@@ -799,12 +801,6 @@ class Mapper(object):
                 self.pipe.send("continue")
                 continue
 
-
-            if self.verbose:
-                print(Fore.YELLOW)
-                print(f"Added Key Frame {idx}")
-                print(Style.RESET_ALL)
-
             self.keyframe_list.append(idx)
             dic_of_cur_frame = {'idx': idx, 'color': gt_color.detach().cpu(),
                                 'video_idx': video_idx,
@@ -815,7 +811,6 @@ class Mapper(object):
                 dic_of_cur_frame.update(
                     {'dynamic_r_query': self.dynamic_r_query.detach()})
             self.keyframe_dict.append(dic_of_cur_frame)
-
             self.pipe.send("continue")
 
     def final_refine(self,save_final_pcl=True):
@@ -852,7 +847,7 @@ class Mapper(object):
             pcd.colors = o3d.utility.Vector3dVector(cloud_rgb/255.0)
             o3d.io.write_point_cloud(
                 f'{self.output}/final_point_cloud.ply', pcd)
-            print('Saved point cloud and point normals.')
+            self.printer.print('Saved point cloud and point normals.',FontColor.INFO)
             if self.logger:
                 self.logger.log(
                     {f'Cloud/point_cloud_{idx:05d}': wandb.Object3D(point_cloud)})

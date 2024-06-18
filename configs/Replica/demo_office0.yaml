@@ -23,4 +23,5 @@ setting: demo
 meshing:
   gt_mesh_path: cull_replica_mesh/office0.ply
 data:
+  output: output/Replica
   input_folder: datasets/Replica/office0
