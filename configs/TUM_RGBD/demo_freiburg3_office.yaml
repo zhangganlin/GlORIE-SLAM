@@ -1,0 +1,25 @@
+inherit_from: ./configs/TUM_RGBD/tum.yaml
+mode: mono
+scene: freiburg3_office
+only_tracking: False
+offline_mapping: False
+offline_video: video.npz
+wandb: False
+
+stride: 2
+max_frames: 200
+
+mapping:
+  iters: 150
+
+setting: demo
+
+data:
+  input_folder: datasets/TUM_RGBD/rgbd_dataset_freiburg3_long_office_household
+cam:  #intrinsic is different per scene in TUM, this cam does not have distortion
+  H: 480 
+  W: 640 
+  fx: 535.4
+  fy: 539.2
+  cx: 320.1
+  cy: 247.6

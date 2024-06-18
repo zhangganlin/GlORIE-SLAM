@@ -1,0 +1,10 @@
+inherit_from: configs/Replica/replica.yaml
+scene: office3
+only_tracking: False
+wandb: True
+
+
+meshing:
+  gt_mesh_path: cull_replica_mesh/office3.ply
+data:
+  input_folder: datasets/Replica/office3

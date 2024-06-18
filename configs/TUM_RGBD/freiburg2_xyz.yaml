@@ -1,0 +1,17 @@
+inherit_from: ./configs/TUM_RGBD/tum.yaml
+
+scene: freiburg2_xyz
+only_tracking: False
+wandb: True
+
+data:
+  input_folder: datasets/TUM_RGBD/rgbd_dataset_freiburg2_xyz
+cam:  #intrinsic is different per scene in TUM
+  H: 480 
+  W: 640 
+  fx: 520.9
+  fy: 521.0
+  cx: 325.1
+  cy: 249.7
+  distortion: [0.2312, -0.7849, -0.0033, -0.0001, 0.9172]
+
