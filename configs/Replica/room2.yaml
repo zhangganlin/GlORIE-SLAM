@@ -1,0 +1,11 @@
+inherit_from: configs/Replica/replica.yaml
+
+scene: room2
+only_tracking: False
+wandb: True
+
+
+meshing:
+  gt_mesh_path: cull_replica_mesh/room2.ply
+data:
+  input_folder: datasets/Replica/room2

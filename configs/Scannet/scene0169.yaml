@@ -1,0 +1,13 @@
+inherit_from: ./configs/Scannet/scannet.yaml
+
+
+scene: scene0169
+only_tracking: False
+wandb: True
+max_frames: -1
+
+meshing:
+  gt_mesh_path: /cluster/work/cvl/esandstroem/src/mono_point_slam/scans/scene0169_00/scene0169_00_vh_clean_2.ply
+
+data:
+  input_folder: datasets/Scannet/scene0169_00

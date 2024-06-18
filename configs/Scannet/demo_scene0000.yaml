@@ -1,0 +1,22 @@
+inherit_from: ./configs/Scannet/scannet.yaml
+mode: mono
+
+scene: scene0000
+only_tracking: False
+offline_mapping: False
+offline_video: video.npz
+wandb: False
+stride: 2
+max_frames: 200
+
+mapping:
+  iters: 150
+
+
+setting: demo
+
+meshing:
+  gt_mesh_path: /cluster/work/cvl/esandstroem/src/mono_point_slam/scans/scene0000_00/scene0000_00_vh_clean_2.ply
+
+data:
+  input_folder: datasets/Scannet/scene0000_00
