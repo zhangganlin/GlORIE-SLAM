@@ -14,12 +14,12 @@
     ·
     <a href="https://cvg.ethz.ch/team/Dr-Martin-R-Oswald"><strong>Martin R. Oswald<sup>1,6</sup></strong></a>
   </p>
-  <p align="center"><strong>
-            <sup>1 </sup>ETH Zurich,  <sup>2 </sup>University of Bologna, <sup>3 </sup>Rock Universe, <sup>4 </sup>KU Leuven, <sup>5 </sup>INSAIT, <sup>6 </sup>University of Amsterdam
+  <p align="center">
+      <strong><sup>1 </sup>ETH Zurich,  <sup>2 </sup>University of Bologna, <sup>3 </sup>Rock Universe, <sup>4 </sup>KU Leuven, <sup>5 </sup>INSAIT, <sup>6 </sup>University of Amsterdam</strong>
+      <br>(<strong>*</strong> Equal Contribution)
+      <strong><h4 align="center"><a href="https://arxiv.org/abs/2403.19549">Paper</a></h4></strong>
   </strong></p>
-  
-  <p align="center"><strong>(* Equal Contribution)</strong></p>
-  <div align="center"><h3 align="center"><a href="https://arxiv.org/abs/2403.19549">Paper</a></div>
+    
 
 <!-- <p align="center">
   <a href="">
