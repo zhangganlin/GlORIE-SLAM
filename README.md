@@ -9,7 +9,7 @@
     <a href="https://youmi-zym.github.io/"><strong>Youmin Zhang<sup>2,3</sup></strong></a>
     ·
     <a href="https://manthan99.github.io/"><strong>Manthan Patel<sup>1</sup></strong></a>
-    ·
+    <br>
     <a href="https://vision.ee.ethz.ch/people-details.OTAyMzM=.TGlzdC8zMjcxLC0xOTcxNDY1MTc4.html"><strong>Luc Van Gool<sup>1,4,5</sup></strong></a>
     ·
     <a href="https://cvg.ethz.ch/team/Dr-Martin-R-Oswald"><strong>Martin R. Oswald<sup>1,6</sup></strong></a>
