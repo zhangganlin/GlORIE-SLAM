@@ -21,32 +21,25 @@
   </strong></p>
     
 
-<p align="center">
-  <video autoplay loop muted>
-    <source src="./media/scene00_topdown.mp4" type="video/mp4" />
-    ScanNet Scene0000
-  </video>
 
-
-</p>
 <p align="center">
-GlORIE-SLAM produces accurate dense geometry and camera tracking on large-scale indoor scenes thanks to our <strong>deformable scene representation</strong> and DSPO layer.
+    <img src="./media/scene00_topdown.gif" alt="teaser_video" width="65%">
 </p>
 
 <p align="center">
-  <a href="">
+<strong>GlORIE-SLAM</strong> produces accurate dense geometry and camera tracking on large-scale indoor scenes thanks to our <strong>deformable scene representation</strong> and <strong>DSPO layer</strong>.
+</p>
+
+<p align="center">
     <img src="./media/teaser.png" alt="teaser_image" width="100%">
-  </a>
 </p>
 
-<strong>GlORIE-SLAM</strong> uses a deformable point cloud as the scene representation and achieves lower trajectory error and higher rendering accuracy compared to competitive approaches, e.g. GO-SLAM. The geometric accuracy is qualitatively evaluated.
+<strong>GlORIE-SLAM</strong> uses a deformable point cloud as the scene representation and achieves lower trajectory error and higher rendering accuracy compared to competitive approaches.
 
 
 
 <p align="center">
-  <a href="">
     <img src="./media/framework.jpg" alt="framework" width="100%">
-  </a>
 </p>
 <p align="center">
 GlORIE-SLAM Architecture.
