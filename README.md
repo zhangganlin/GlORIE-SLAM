@@ -1,6 +1,21 @@
 <!-- PROJECT LOGO -->
+  <style>
+    .header {
+      display: flex;
+      align-items: center; /* Align items vertically */
+    }
+    .logo {
+      width: 60px; /* Adjust width as needed */
+      height: auto; /* Maintain aspect ratio */
+      margin-right: 10px; /* Space between logo and headline */
+    }
+  </style>
 
-  <h1 align="center">GlORIE-SLAM: Globally Optimized RGB-only Implicit Encoding Point Cloud SLAM</h1>
+  <div class="header">
+    <img src="./media/glory.png" alt="Logo" class="logo">
+    <h1>GlORIE-SLAM: Globally Optimized RGB-only Implicit Encoding Point Cloud SLAM</h1>
+  </div>
+
   <p align="center">
     <a href="https://ganlinzhang.xyz"><strong>Ganlin Zhang<sup>1</sup>*</strong></a>
     ·
