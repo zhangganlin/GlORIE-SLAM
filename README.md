@@ -21,14 +21,17 @@
   </strong></p>
     
 
-<!-- <p align="center">
-  <a href="">
-    <img src="./media/office_4.gif" alt="teaser_video" width="80%">
-  </a>
+<p align="center">
+  <video autoplay loop muted>
+    <source src="./media/scene00_topdown.mp4" type="video/mp4" />
+    ScanNet Scene0000
+  </video>
+
+
 </p>
 <p align="center">
-GlORIE-SLAM produces accurate dense geometry and camera tracking on large-scale indoor scenes.
-</p> -->
+GlORIE-SLAM produces accurate dense geometry and camera tracking on large-scale indoor scenes thanks to our <strong>deformable scene representation</strong> and DSPO layer.
+</p>
 
 <p align="center">
   <a href="">
