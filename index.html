@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="GlORIE-SLAM: Globally Optimized RGB-only Implicit Encoding Point Cloud SLAM">
+  <meta name="keywords" content="GlORIE-SLAM, SLAM, Bundle Adjustment, Dense Neural Slam, Point Cloud">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GlORIE-SLAM</title>
+  <link rel="icon" href="./media/glory.png" type="image/png">
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="./static/css/magnifier.css">
+  <link href="./static/css/twentytwenty.css" rel="stylesheet" type="text/css"/>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">GlORIE-SLAM: Globally Optimized RGB-only Implicit Encoding Point Cloud SLAM</h1> 
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://ganlinzhang.xyz" target="_blank">Ganlin Zhang</a><sup>1</sup>*, </span>
+            <span class="author-block">
+              <a href="https://eriksandstroem.github.io/" target="_blank">Erik Sandström</a><sup>1</sup>*, </span>
+            <span class="author-block">
+              <a href="https://youmi-zym.github.io/" target="_blank">Youmin Zhang</a><sup>2,3</sup>, </span>
+            <span class="author-block">
+              <a href="https://manthan99.github.io/" target="_blank">Manthan Patel</a><sup>1</sup>, </span>
+            <span class="author-block">
+              <a href="https://vision.ee.ethz.ch/people-details.OTAyMzM=.TGlzdC8zMjcxLC0xOTcxNDY1MTc4.html" target="_blank">Luc Van Gool</a><sup>1,4,5</sup>, </span>
+            <span class="author-block">
+              <a href="https://cvg.ethz.ch/team/Dr-Martin-R-Oswald" target="_blank">Martin R. Oswald</a><sup>1,6</sup></span>
+                              
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1 </sup>ETH Zurich,  <sup>2 </sup>University of Bologna, <sup>3 </sup>Rock Universe, <sup>4 </sup>KU Leuven, <sup>5 </sup>INSAIT, <sup>6 </sup>University of Amsterdam
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>*</sup>Authors contributed equally to this work.</span>
+          </div>
+
+          <!-- <div class="is-centered is-size-4"><b>CVPR 2024</b></div> -->
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span> -->
+              <!-- <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span>                             -->
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2403.19549"
+                   class="external-link button is-normal is-rounded is-dark" target="_blank">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/zhangganlin/GlORIE-SLAM"
+                   class="external-link button is-normal is-rounded is-dark" target="_blank">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" autoplay muted loop playsinline width="100%">
+        <source src="./media/video_fuse_2_s.mp4"
+                type="video/mp4">
+      </video>
+      <div class="content has-text-justified">
+        We show the online reconstruction process with scene deformation and online bundle adjustment on <code>scene0000</code>
+        from the ScanNet dataset. We show the ground truth trajectory in 
+        <span style="color: rgb(23,230,230);">light blue</span> and the estimated in <span style="color: rgb(23,23,230);">blue</span>. 
+        The left part shows a moving camera view and the right part shows the topdown view of the reconstructed scene.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            Recent advancements in RGB-only dense Simultaneous Localization and Mapping (SLAM) have predominantly utilized grid-based
+            neural implicit encodings and/or struggle to efficiently realize global map
+            and pose consistency. To this end, we propose an efficient RGB-only
+            dense SLAM system using a flexible neural point cloud scene representation that adapts to keyframe poses and depth updates, without
+            needing costly backpropagation. Another critical challenge of RGB-only
+            SLAM is the lack of geometric priors. To alleviate this issue, with the
+            aid of a monocular depth estimator, we introduce a novel DSPO layer
+            for bundle adjustment which optimizes the pose and depth of keyframes
+            along with the scale of the monocular depth. Finally, our system benefits from loop closure and 
+            online global bundle adjustment and performs either better or competitive to existing dense neural RGB SLAM
+            methods in tracking, mapping and rendering accuracy on the Replica,
+            TUM-RGBD and ScanNet datasets.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <img src="./media/teaser.png">
+    <div class="content has-text-justified">
+        <strong>GlORIE-SLAM</strong> uses a deformable point cloud as the scene representation 
+        and achieves lower trajectory error and higher rendering accuracy compared to competitive approaches, <i>e.g.</i> GO-SLAM.
+        The geometric accuracy is qualitatively evaluated. The <span style="color: rgb(0,179,179);">light blue</span> trajectory is ground
+        truth and the <span style="color: rgb(0,0,179);">blue</span> is the estimated. The PSNR is evaluated for all keyframes.
+      </div>
+  </div>
+
+</section>
+
+
+
+<section class="section m-0 p-0">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Method Overview</h2>
+    
+        <div class="column pt-0">
+          <figure class="image is-full-width">
+            <img src="./media/framework.jpg"/>
+          </figure>
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            Given an input RGB stream, we first track
+            and then map every keyframe. The pose is initially estimated with local bundle adjustment (BA) 
+            via frame-to-frame tracking of recurrent optical flow estimation. This
+            is done with our novel <strong>DSPO (Disparity, Scale and Pose Optimization) </strong> layer, which
+            combines pose and depth estimation with scale and depth refinement by leveraging a
+            monocular depth prior. The DSPO layer also refines the poses globally via online loop
+            closure and global BA. To map the estimated pose, a proxy depth map is estimated
+            by combining the noisy keyframe depths from the tracking module with the monocular
+            depth prior to account for missing observations. Mapping is done, along with the input
+            RGB keyframe via a <strong>deformable neural point cloud</strong>, leveraging depth guided volumetric
+            rendering. A re-rendering loss to the input RGB and proxy depth optimizes the neural
+            features and the color decoder weights. Importantly, the neural point cloud deforms to
+            account for global updates of the poses and proxy depth before each mapping phase.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section m-0 p-0">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column"><br>
+          <h2 style="text-align: left;" class="title is-4"><strong>DSPO (Disparity, Scale and Pose Optimization)</strong></h2>
+          <div class="content has-text-justified">
+            <p>
+            <strong>Input:</strong> Optical flow between keyframes & mono depth prior <br>
+            <strong>Output:</strong> Camera poses <span style="font-family: 'TeX Gyre Schola', serif;"><i>&omega;</i></span> and disparity maps <span style="font-family: 'TeX Gyre Schola', serif;"><i>d</i></span><br>
+            </p>
+            <p>
+                Step A: Reprojection Error<br>
+                <div style="text-align: center;">
+                <img src="media/eqa.png" style="height: 70px"/>
+                </div> <br>
+                Step B: Multi-view Filter​<br>
+                <div style="text-align: center;">
+                <img src="media/eqb.png" style="height: 70px"/>
+                </div> <br>
+                Step C: Optimize Scale, Shift and Disparity Jointly<br>
+                <div style="text-indent: 55px;"><small>only optimize disparities that failed in multi-view filter​</small></div>
+                <div style="text-align: center;">
+                <img src="media/eqc.png" style="height: 110px; margin-top: 20px;"/>
+                </div> <br>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<br><br><br>
+
+
+<section class="section m-0 p-0">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column"><br>
+            <h2 class="title is-3" align="center">Qualitative Results</h2>
+            <h2 style="text-align: left;" class="title is-4"><strong>Textured Meshes</strong></h2>
+            <div style="text-align: center;"><img src="./media/mesh.png" style="width: 100%;"></div>
+            <br>
+            <h2 style="text-align: left;" class="title is-4"><strong>Rendered Images</strong></h2>
+            
+            <div class="columns is-centered has-text-centered">
+                <div class="column">
+                    <div class="twentytwenty-container">
+                        <img src="./media/rendered/ours_54_04716.png" alt="GlORIE-SLAM" class="img-responsive">
+                        <img src="./media/rendered/go_54_04706.png" alt="GO-SLAM" class="img-responsive">
+                        <img src="./media/rendered/gt_54_04716.png" alt="Ground Truth" class="img-responsive">
+                    </div>
+                    <div class="twentytwenty-container">
+                        <img src="./media/rendered/ours_54_05381.png" alt="GlORIE-SLAM" class="img-responsive">
+                        <img src="./media/rendered/go_54_05374.png" alt="GO-SLAM" class="img-responsive">
+                        <img src="./media/rendered/gt_54_05381.png" alt="Ground Truth" class="img-responsive">
+                    </div> 
+                </div>
+                <div class="column">
+                    <div class="twentytwenty-container">
+                        <img src="./media/rendered/ours_169_01204.png" alt="GlORIE-SLAM" class="img-responsive">
+                        <img src="./media/rendered/go_169_01189.png" alt="GO-SLAM" class="img-responsive">
+                        <img src="./media/rendered/gt_169_01204.png" alt="Ground Truth" class="img-responsive">
+                    </div>
+                    <div class="twentytwenty-container">
+                        <img src="./media/rendered/ours_169_01490.png" alt="GlORIE-SLAM" class="img-responsive">
+                        <img src="./media/rendered/go_169_01477.png" alt="GO-SLAM" class="img-responsive">
+                        <img src="./media/rendered/gt_169_01490.png" alt="Ground Truth" class="img-responsive">
+                    </div> 
+                </div>
+                <div class="column">
+                    <div class="twentytwenty-container">
+                        <img src="./media/rendered/ours_233_03894.png" alt="GlORIE-SLAM" class="img-responsive">
+                        <img src="./media/rendered/go_233_03894.png" alt="GO-SLAM" class="img-responsive">
+                        <img src="./media/rendered/gt_233_03894.png" alt="Ground Truth" class="img-responsive">
+                    </div>
+                    <div class="twentytwenty-container">
+                        <img src="./media/rendered/ours_233_07113.png" alt="GlORIE-SLAM" class="img-responsive">
+                        <img src="./media/rendered/go_233_07107.png" alt="GO-SLAM" class="img-responsive">
+                        <img src="./media/rendered/gt_233_07113.png" alt="Ground Truth" class="img-responsive">
+                    </div> 
+                </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>
+        @article{zhang2024glorie,
+            title={Glorie-slam: Globally optimized rgb-only implicit encoding point cloud slam},
+            author={Zhang, Ganlin and Sandstr{\"o}m, Erik and Zhang, Youmin and Patel, Manthan and Van Gool, Luc and Oswald, Martin R},
+            journal={arXiv preprint arXiv:2403.19549},
+            year={2024}
+          }
+    </code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-4">
+        <div class="content">
+          <p>
+            The website is based on <a href="https://github.com/nerfies/nerfies.github.io" target="_blank">this source code</a> and the Loopy-SLAM project page.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="./static/js/magnifier.js"></script>
+<script src="./static/js/jquery.event.move.js"></script>
+<script src="./static/js/jquery.twentytwenty.js"></script>
+<script>
+  $(window).load(function() {
+      $(".twentytwenty-container").twentytwenty({
+          default_offset_pct: 0.5
+      });
+      var shiftWindow = function() {
+          scrollBy(0, -80);
+      };
+      window.addEventListener("hashchange", shiftWindow);
+  });
+  </script>
