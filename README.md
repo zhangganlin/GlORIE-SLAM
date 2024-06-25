@@ -187,7 +187,7 @@ After reconstruction, the trajectory error will be evaluated automatically.
 
 ### ScanNet
 
-To run Point-SLAM on the `scene0000_00` scene, run the following command. 
+To run GlORIE-SLAM on the `scene0000_00` scene, run the following command. 
 ```bash
 python run.py configs/Scannet/demo_scene0000_00.yaml
 ```
