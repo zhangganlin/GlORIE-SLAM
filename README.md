@@ -1,22 +1,22 @@
 <!-- PROJECT LOGO -->
   <h1 align="center"><img src="./media/glory.png" alt="logo" width=60>GlORIE-SLAM: Globally Optimized RGB-only Implicit Encoding Point Cloud SLAM</h1>
   <p align="center">
-    <a href="https://ganlinzhang.xyz"><strong>Ganlin Zhang<sup>1</sup>*</strong></a>
+    <a href="https://ganlinzhang.xyz" target="_blank"><strong>Ganlin Zhang<sup>1</sup>*</strong></a>
     ·
-    <a href="https://eriksandstroem.github.io/"><strong>Erik Sandström<sup>1</sup>*</strong></a>
+    <a href="https://eriksandstroem.github.io/" target="_blank"><strong>Erik Sandström<sup>1</sup>*</strong></a>
     ·
-    <a href="https://youmi-zym.github.io/"><strong>Youmin Zhang<sup>2,3</sup></strong></a>
+    <a href="https://youmi-zym.github.io/" target="_blank"><strong>Youmin Zhang<sup>2,3</sup></strong></a>
     ·
-    <a href="https://manthan99.github.io/"><strong>Manthan Patel<sup>1</sup></strong></a>
+    <a href="https://manthan99.github.io/" target="_blank"><strong>Manthan Patel<sup>1</sup></strong></a>
     <br>
-    <a href="https://vision.ee.ethz.ch/people-details.OTAyMzM=.TGlzdC8zMjcxLC0xOTcxNDY1MTc4.html"><strong>Luc Van Gool<sup>1,4,5</sup></strong></a>
+    <a href="https://vision.ee.ethz.ch/people-details.OTAyMzM=.TGlzdC8zMjcxLC0xOTcxNDY1MTc4.html" target="_blank"><strong>Luc Van Gool<sup>1,4,5</sup></strong></a>
     ·
-    <a href="https://cvg.ethz.ch/team/Dr-Martin-R-Oswald"><strong>Martin R. Oswald<sup>1,6</sup></strong></a>
+    <a href="https://cvg.ethz.ch/team/Dr-Martin-R-Oswald" target="_blank"><strong>Martin R. Oswald<sup>1,6</sup></strong></a>
   </p>
   <p align="center">
       <strong><sup>1 </sup>ETH Zurich,  <sup>2 </sup>University of Bologna, <sup>3 </sup>Rock Universe, <sup>4 </sup>KU Leuven, <sup>5 </sup>INSAIT, <sup>6 </sup>University of Amsterdam</strong>
       <br>(<strong>*</strong> Equal Contribution)
-      <strong><h4 align="center"><a href="https://arxiv.org/abs/2403.19549">Paper</a></h4></strong>
+      <strong><h4 align="center"><a href="https://arxiv.org/abs/2403.19549" target="_blank">Paper</a> | <a href="https://ganlinzhang.xyz/GlORIE-SLAM/" target="_blank">Project Website</a></h4></strong>
   </strong></p>
     
 
@@ -187,7 +187,7 @@ After reconstruction, the trajectory error will be evaluated automatically.
 
 ### ScanNet
 
-To run Point-SLAM on the `scene0000_00` scene, run the following command. 
+To run GlORIE-SLAM on the `scene0000_00` scene, run the following command. 
 ```bash
 python run.py configs/Scannet/demo_scene0000_00.yaml
 ```
