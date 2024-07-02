@@ -58,5 +58,5 @@ if __name__ == '__main__':
     slam.run()
 
     end_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    print("-"*30+Fore.LIGHTRED_EX+f"\nGlORIE-SLAM finishes!\n+Style.RESET_ALL+{end_time}\n"+"-"*30)
+    print("-"*30+Fore.LIGHTRED_EX+f"\nGlORIE-SLAM finishes!\n"+Style.RESET_ALL+f"{end_time}\n"+"-"*30)
 
