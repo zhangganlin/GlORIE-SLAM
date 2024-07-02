@@ -7,7 +7,7 @@ offline_video: video.npz
 wandb: False
 
 stride: 2
-max_frames: 200
+max_frames: 400
 
 mapping:
   iters: 150
