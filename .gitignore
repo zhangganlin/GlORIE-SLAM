@@ -17,6 +17,7 @@ wandb
 *.DS_Store
 
 *test.yaml
+test*.yaml
 datasets
 cull_replica_mesh
 euler

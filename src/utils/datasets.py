@@ -18,7 +18,6 @@ class BaseDataset(Dataset):
     def __init__(self, cfg, device='cuda:0'):
         super(BaseDataset, self).__init__()
         self.name = cfg['dataset']
-        self.stereo = (cfg['mode'] == 'stereo')
         self.device = device
         self.png_depth_scale = cfg['cam']['png_depth_scale']
         self.n_img = -1
@@ -39,7 +38,8 @@ class BaseDataset(Dataset):
         # tmpdir = os.environ.get('TMPDIR')
         # self.input_folder = tmpdir + '/' + cfg['data']['input_folder']
         
-        self.input_folder = cfg['data']['input_folder']
+        # self.input_folder = cfg['data']['input_folder']
+        self.input_folder = os.path.expandvars(cfg['data']['input_folder'])
 
 
     def __len__(self):
