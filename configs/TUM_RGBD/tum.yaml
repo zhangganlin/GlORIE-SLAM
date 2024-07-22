@@ -1,6 +1,5 @@
 verbose: True
 dataset: 'tumrgbd'
-mode: 'mono'
 stride: 1
 setting: median_filter
 

@@ -1,5 +1,4 @@
 inherit_from: ./configs/TUM_RGBD/tum.yaml
-mode: mono
 scene: freiburg3_office
 only_tracking: False
 offline_mapping: False

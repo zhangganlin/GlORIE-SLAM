@@ -10,3 +10,4 @@ meshing:
   gt_mesh_path: cull_replica_mesh/office4.ply
 data:
   input_folder: datasets/Replica/office4
+  # input_folder: ${TMPDIR}/office4

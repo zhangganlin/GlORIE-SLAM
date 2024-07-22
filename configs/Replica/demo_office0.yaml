@@ -1,5 +1,4 @@
 inherit_from: configs/Replica/replica.yaml
-mode: mono
 scene: demo_office0
 only_tracking: False
 wandb: False

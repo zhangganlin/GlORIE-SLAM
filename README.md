@@ -189,7 +189,7 @@ After reconstruction, the trajectory error will be evaluated automatically.
 
 To run GlORIE-SLAM on the `scene0000_00` scene, run the following command. 
 ```bash
-python run.py configs/Scannet/demo_scene0000_00.yaml
+python run.py configs/Scannet/demo_scene0000.yaml
 ```
 After reconstruction, the trajectory error will be evaluated automatically.
 

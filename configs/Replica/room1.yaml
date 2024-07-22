@@ -13,3 +13,4 @@ meshing:
   gt_mesh_path: cull_replica_mesh/room1.ply
 data:
   input_folder: datasets/Replica/room1
+  # input_folder: ${TMPDIR}/room1

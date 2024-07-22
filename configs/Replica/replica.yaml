@@ -62,4 +62,5 @@ mono_prior:
   predict_online: True
 
 data:
+  # output: /cluster/work/cvl/esandstroem/src/mono_point_slam/output/Replica
   output: output/Replica

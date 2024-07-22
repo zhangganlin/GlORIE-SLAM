@@ -1,5 +1,4 @@
 inherit_from: ./configs/Scannet/scannet.yaml
-mode: mono
 
 scene: scene0000
 only_tracking: False
