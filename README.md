@@ -198,7 +198,7 @@ Our GlORIE-SLAM pipeline uses two processes for tracking and mapping, and it is 
 ```bash
 python run.py configs/Replica/demo_office0.yaml --only_tracking
 python run.py configs/TUM_RGBD/demo_freiburg3_office.yaml --only_tracking
-python run.py configs/Scannet/demo_scene0000_00.yaml --only_tracking
+python run.py configs/Scannet/demo_scene0000.yaml --only_tracking
 ```
 
 ## Acknowledgement
