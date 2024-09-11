@@ -40,7 +40,7 @@ tracking:
     loop_thresh: 25.0  
     loop_radius: 1
     loop_nms: 10
-    BA_type: "DSPO"
+    BA_type: "DBA"
     normalize: False
 
 cam:  #NOTE: intrinsic is different per scene in TUM
