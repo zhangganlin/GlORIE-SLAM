@@ -34,7 +34,7 @@ def get_msg_prefix(color):
 class TrivialPrinter(object):
     def print(self,msg:str,color=None):
         msg_prefix = get_msg_prefix(color)
-        msg = msg_prefix + msg + Style.RESET_ALL
+        msg = msg_prefix + str(msg) + Style.RESET_ALL
         print(msg)        
 
 class Printer(TrivialPrinter):
