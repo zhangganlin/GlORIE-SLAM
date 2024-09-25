@@ -84,8 +84,8 @@ class SLAM:
         self.tracker = Tracker(self, pipe)
         self.printer.print('Tracking Triggered!',FontColor.TRACKER)
         self.all_trigered += 1
-
-        os.makedirs(f'{self.output}/mono_priors/depths', exist_ok=True)
+        priors_path = f"{self.cfg['data']['output']}/{self.cfg['scene']}_priors"
+        os.makedirs(f'{priors_path}/depths', exist_ok=True)
 
         while(self.all_trigered < self.num_running_thread):
             pass

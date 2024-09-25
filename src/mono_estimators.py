@@ -36,7 +36,7 @@ def predit_mono_depth(model,idx,input,cfg,device):
     input: tensor (1,3,H,W)
     '''
     depth_model = cfg["mono_prior"]["depth"]
-    output_dir = f"{cfg['data']['output']}/{cfg['setting']}/{cfg['scene']}"
+    output_dir = f"{cfg['data']['output']}/{cfg['scene']}_priors"
     if depth_model == "omnidata":
         # s = cfg["cam"]["H_out"]
         # image_size = (s,s)
@@ -52,7 +52,7 @@ def predit_mono_depth(model,idx,input,cfg,device):
         # If use other mono depth estimator as prior, predit the mono depth here
         raise NotImplementedError
     
-    output_path_np = f"{output_dir}/mono_priors/depths/{idx:05d}.npy"
+    output_path_np = f"{output_dir}/depths/{idx:05d}.npy"
     final_depth = output.detach().cpu().float().numpy()
     np.save(output_path_np, final_depth)
 

@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset
 
 def load_mono_depth(idx,cfg):
-    dir_path = f"{cfg['data']['output']}/{cfg['setting']}/{cfg['scene']}/mono_priors/depths"
+    dir_path = f"{cfg['data']['output']}/{cfg['scene']}_priors/depths"
     mono_depth_path = f"{dir_path}/{idx:05d}.npy"
     mono_depth = np.load(mono_depth_path)
     mono_depth_tensor = torch.from_numpy(mono_depth)
