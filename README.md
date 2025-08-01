@@ -185,6 +185,14 @@ python run.py configs/TUM_RGBD/demo_freiburg3_office.yaml
 ```
 After reconstruction, the trajectory error will be evaluated automatically.
 
+And here are the ATE RMSE trajectory (in meter) errors of full TUM-RGBD-freiburg1, which are not included in the arxiv report:
+
+|    |360|desk|desk2|floor|plant|room|rpy|teddy|xyz|**avg** | 
+|----|---|----|-----|-----|-----|----|---|-----|---|---|
+| kf |0.1249|0.01918|0.03051|0.0275 |0.0213 |0.0443|0.0218|0.0432 |0.0023|0.0372
+|full|0.1281|0.01649|0.02794|0.0210 |0.0208 |0.0416|0.0198|0.0347 |0.0022|0.0347
+
+
 ### ScanNet
 
 To run GlORIE-SLAM on the `scene0000_00` scene, run the following command. 
@@ -192,6 +200,22 @@ To run GlORIE-SLAM on the `scene0000_00` scene, run the following command.
 python run.py configs/Scannet/demo_scene0000.yaml
 ```
 After reconstruction, the trajectory error will be evaluated automatically.
+
+### 7-Scenes
+
+To run GlORIE-SLAM on the `stairs` scene, run the following command. 
+```bash
+python run.py configs/7scenes/stairs.yaml
+```
+After reconstruction, the trajectory error will be evaluated automatically.
+
+And here are is the ATE RMSE trajectory (in meter) errors of 7-Scenes (seq-01), which are not included in the arxiv report:
+
+|   | chess | fire | heads | office | pumpkin | redkitchen | stairs | **avg** | 
+|---|-------|------|-------|--------|---------|------------|--------|---------|
+|kf |0.0361 |0.0263|0.0156 |	0.0975|	0.1169  |	0.0583     | 0.0199 |	0.0529  |
+|full|0.0357|0.0291| 0.0144| 0.0975 | 0.1169  | 0.0583     | 0.0199 | 0.0559  |
+
 
 ## Run tracking without mapping
 Our GlORIE-SLAM pipeline uses two processes for tracking and mapping, and it is possible to run tracking only without mapping/rendering. In case you only want to test the `DSPO` part of our paper, add `--only_tracking`in each of the above commands.
