@@ -1,0 +1,8 @@
+inherit_from: ./configs/7scenes/7scenes.yaml
+
+scene: heads
+only_tracking: True
+wandb: False
+
+data:
+  input_folder: datasets/7scenes/heads/seq-01

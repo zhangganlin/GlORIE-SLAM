@@ -201,6 +201,33 @@ class ScanNet(BaseDataset):
             c2w = np.array(ls).reshape(4, 4)
             self.poses.append(c2w)
 
+class SevenScenes(BaseDataset):
+    def __init__(self, cfg, device='cuda:0'):
+        super(SevenScenes, self).__init__(cfg, device)
+        stride = cfg['stride']
+        max_frames = cfg['max_frames']
+
+        self.color_paths = sorted(glob.glob(os.path.join(
+            self.input_folder, '*.color.png')))
+        self.depth_paths = sorted(glob.glob(os.path.join(
+            self.input_folder, '*.depth.png')))
+        self.n_img = len(self.color_paths)
+        max_frames = self.n_img if max_frames < 0 else max_frames 
+
+        self.load_poses(self.input_folder)
+        self.color_paths = self.color_paths[:max_frames][::stride]
+        self.depth_paths = self.depth_paths[:max_frames][::stride]
+        self.poses = self.poses[:max_frames][::stride]
+
+        self.n_img = len(self.color_paths)
+
+    def load_poses(self, path):
+        self.poses = []
+        pose_paths = sorted(glob.glob(os.path.join(path, '*.txt')))
+        for pose_path in pose_paths:
+            c2w = np.loadtxt(pose_path).astype(np.float32)
+            self.poses.append(c2w)
+
 class TUM_RGBD(BaseDataset):
     def __init__(self, cfg, device='cuda:0'
                  ):
@@ -302,6 +329,7 @@ dataset_dict = {
     "replica": Replica,
     "scannet": ScanNet,
     "tumrgbd": TUM_RGBD,
+    "7scenes": SevenScenes,
 }
 
 def get_dataset(cfg, device='cuda:0') -> BaseDataset:

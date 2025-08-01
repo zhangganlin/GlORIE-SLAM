@@ -1,0 +1,8 @@
+inherit_from: ./configs/7scenes/7scenes.yaml
+
+scene: fire
+only_tracking: True
+wandb: False
+
+data:
+  input_folder: datasets/7scenes/fire/seq-01

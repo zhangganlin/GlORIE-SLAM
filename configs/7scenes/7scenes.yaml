@@ -1,0 +1,66 @@
+verbose: True
+dataset: '7scenes'
+stride: 1
+setting: median_filter
+
+mapping:
+  BA: False
+  geo_iter_ratio: 0.3
+  color_refine: True
+  mapping_window_size: 10
+  pixels: 2000
+  iters_first: 500
+  geo_iter_first: 200
+  iters: 300
+
+tracking:
+  buffer: 600
+  beta: 0.75
+  warmup: 12
+  motion_filter:
+    thresh: 4.0  
+  multiview_filter:
+    thresh: 0.03  
+    visible_num: 2  
+  frontend:
+    enable_loop: True
+    enable_online_ba: True
+    keyframe_thresh: 3.0
+    thresh: 16.0
+    window: 25
+    radius: 2
+    nms: 1
+  backend:
+    final_ba: True
+    thresh: 25.0
+    radius: 1
+    nms: 5
+    # used for loop detection
+    loop_window: 25
+    loop_thresh: 25.0  
+    loop_radius: 1
+    loop_nms: 10
+    BA_type: "DBA"
+    normalize: False
+
+cam: 
+  H: 480
+  W: 640
+  fx: 532.57
+  fy: 531.54
+  cx: 319.5
+  cy: 239.5
+  png_depth_scale: 1000.0 #for depth image in png format
+  ### target/output camera settings, camera_size -> resize -> crop -> target_size
+  H_edge: 8
+  W_edge: 8
+  H_out: 384
+  W_out: 512
+
+mono_prior:
+  depth: omnidata
+  depth_pretrained: ./pretrained/omnidata_dpt_depth_v2.ckpt
+  predict_online: True
+
+data:
+  output: output/7scenes
