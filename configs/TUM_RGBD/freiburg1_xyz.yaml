@@ -1,4 +1,4 @@
-inherit_from: ./configs/local/TUM_RGBD/tum.yaml
+inherit_from: ./configs/TUM_RGBD/tum.yaml
 
 scene: freiburg1_xyz
 only_tracking: False
