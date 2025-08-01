@@ -38,13 +38,16 @@ class TrivialPrinter(object):
         print(msg)        
 
 class Printer(TrivialPrinter):
-    def __init__(self, total_img_num):
+    def __init__(self, total_img_num, silence):
+        self.silence = silence
         self.msg_lock = mp.Lock()
         self.msg_queue = mp.Queue()
         self.progress_counter = mp.Value('i', 0)
         process = mp.Process(target=self.printer_process, args=(total_img_num,))
         process.start()
     def print(self,msg:str,color=None):
+        if self.silence:
+            return
         msg_prefix = get_msg_prefix(color)
         msg = msg_prefix + msg + Style.RESET_ALL
         with self.msg_lock:

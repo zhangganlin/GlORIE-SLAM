@@ -661,7 +661,7 @@ class Mapper(object):
                                 'num_joint_iters': num_joint_iters})
 
 
-        if (not color_refine):
+        if (not color_refine) and (not self.cfg['silence']):
             self.visualizer.vis(cur_idx, num_joint_iters-1, cur_gt_depth, 
                                 cur_depth, cur_droid_depth, cur_mono_depth,
                                 cur_gt_color, 

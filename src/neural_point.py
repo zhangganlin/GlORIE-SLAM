@@ -463,7 +463,10 @@ def proj_depth_map(c2w, npc, device, cfg, neural_pcl=False):
     if neural_pcl:
         points = npc.cloud_pos()
     else:
-        points = npc.full_pcl()[npc.full_mask()]
+        full_mask = npc.full_mask().clone()
+        video_idx = npc.video.counter.value
+        full_mask[:,video_idx-cfg["mapping"]["mapping_window_size"]] = 0
+        points = npc.full_pcl()[full_mask]
 
     w2c = c2w.inverse()
     ones = torch.ones_like(points[:,0]).reshape(-1,1)

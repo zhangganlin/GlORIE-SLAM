@@ -45,7 +45,7 @@ class SLAM:
 
         self.droid_net:DroidNet = DroidNet()
 
-        self.printer = Printer(len(stream))    # use an additional process for printing all the info
+        self.printer = Printer(len(stream),cfg['silence'])    # use an additional process for printing all the info
 
         self.load_pretrained(cfg)
         self.droid_net.to(self.device).eval()
@@ -135,8 +135,7 @@ class SLAM:
             self.mapper.final_refine(save_final_pcl=True)
         self.video.save_video(f"{self.output}/video.npz")
 
-        do_evaluation = True
-        if do_evaluation:
+        if not self.cfg['silence']:
             try:
                 ate_statistics, traj_scale, r_a, t_a = kf_traj_eval(
                     f"{self.output}/video.npz",

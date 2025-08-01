@@ -8,6 +8,7 @@ setup_seed: 43
 wandb: False         # whether to log through wandb
 wandb_folder: /cluster/work/cvl/esandstroem/src/mono_point_slam/output
 device: "cuda:0"
+silence: False        # if true, no print or log
 
 mapping:
   pretrained: ./pretrained/middle_fine.pt

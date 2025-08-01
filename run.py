@@ -21,6 +21,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('config', type=str, help='Path to config file.')
     parser.add_argument("--only_tracking", action="store_true", help="Only tracking is triggered")
+    parser.add_argument("--silence", action="store_true", help="skip print or log")
     args = parser.parse_args()
 
     torch.multiprocessing.set_start_method('spawn')
@@ -34,6 +35,11 @@ if __name__ == '__main__':
         cfg['only_tracking'] = True
         cfg['wandb'] = False
         cfg['mono_prior']['predict_online'] = True
+    if args.silence:
+        cfg['silence'] = True
+        cfg['wandb'] = False
+        cfg['mono_prior']['predict_online'] = False
+        cfg['mapping']['save_rendered_image'] = False
 
     output_dir = cfg['data']['output']
     output_dir = output_dir+f"/{cfg['setting']}/{cfg['scene']}"
